@@ -61,20 +61,32 @@ async function handlePOST({ request }: { request: Request }) {
     console.error("Failed to update conversation metadata", err)
   }
 
-  const responseStream = chat({
-    adapter: anthropicText(model),
-    messages,
-  })
+  try {
+    const responseStream = chat({
+      adapter: anthropicText(model),
+      messages,
+    })
 
-  return await toDurableChatSessionResponse({
-    stream: {
-      writeUrl: `${DS_BASE}/chat-${id}`,
-      headers: DS_AUTH,
-      createIfMissing: true,
-    },
-    newMessages: latestUserMessage ? [latestUserMessage] : [],
-    responseStream,
-  })
+    return await toDurableChatSessionResponse({
+      stream: {
+        writeUrl: `${DS_BASE}/chat-${id}`,
+        headers: DS_AUTH,
+        createIfMissing: true,
+      },
+      newMessages: latestUserMessage ? [latestUserMessage] : [],
+      responseStream,
+      mode: "await",
+    })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error("Chat handler failed:", message)
+    const status = /401|unauthoriz|invalid.*api.*key/i.test(message)
+      ? 401
+      : /429|rate.?limit/i.test(message)
+        ? 429
+        : 500
+    return Response.json({ error: message }, { status })
+  }
 }
 
 export const Route = createFileRoute("/api/chat")({

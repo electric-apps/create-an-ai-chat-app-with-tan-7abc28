@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useLiveQuery } from "@tanstack/react-db"
-import { eq } from "@tanstack/db"
 import { useChat } from "@tanstack/ai-react"
 import { durableStreamConnection } from "@durable-streams/tanstack-ai-transport"
 import { Send } from "lucide-react"
@@ -24,12 +23,10 @@ function ChatPage() {
   const navigate = useNavigate()
   const { apiKey, ready } = useApiKey()
 
-  const { data: matches = [] } = useLiveQuery((q) =>
-    q
-      .from({ conv: conversationsCollection })
-      .where(({ conv }) => eq(conv.id, conversationId)),
+  const { data: allConversations = [] } = useLiveQuery((q) =>
+    q.from({ conv: conversationsCollection }),
   )
-  const conversation = matches[0]
+  const conversation = allConversations.find((c) => c.id === conversationId)
 
   const streamId = conversation?.stream_id
   const connection = useMemo(() => {
@@ -41,11 +38,7 @@ function ChatPage() {
     })
   }, [streamId, apiKey])
 
-  if (ready && conversation === undefined && matches.length === 0) {
-    // Collection hasn't hydrated OR conversation does not exist.
-    // Give it a beat; if still missing, show a stub.
-  }
-
+  void ready
   if (!conversation) {
     return (
       <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
@@ -96,7 +89,7 @@ function ChatInner({
     if (el) el.scrollTop = el.scrollHeight
   }, [messages])
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = input.trim()
     if (!text) return
     if (!apiKeyPresent) {
@@ -104,8 +97,20 @@ function ChatInner({
       return
     }
     void MODEL
-    sendMessage(text)
     setInput("")
+    try {
+      await sendMessage(text)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      toast.error(
+        /401|unauthoriz|invalid.*api.*key/i.test(message)
+          ? "Invalid Anthropic API key. Check it in Settings."
+          : /429|rate.?limit/i.test(message)
+            ? "Rate limited by Anthropic. Try again shortly."
+            : `Chat failed: ${message}`,
+      )
+      setInput(text)
+    }
   }
 
   return (

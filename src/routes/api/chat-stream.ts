@@ -33,6 +33,20 @@ async function handleGET({ request }: { request: Request }) {
     },
   })
 
+  // Silence 404s when the stream hasn't been created yet (new conversation,
+  // pre-first-message). Return an empty SSE-compatible response so the DS
+  // client keeps long-polling quietly.
+  if (response.status === 404) {
+    const isSse = (accept ?? "").includes("text/event-stream")
+    return new Response(isSse ? ":\n\n" : "[]", {
+      status: 200,
+      headers: {
+        "Content-Type": isSse ? "text/event-stream" : "application/json",
+        "Cache-Control": "no-store",
+      },
+    })
+  }
+
   const headers = new Headers()
   for (const [k, v] of response.headers) {
     if (HOP_BY_HOP.has(k.toLowerCase())) continue
