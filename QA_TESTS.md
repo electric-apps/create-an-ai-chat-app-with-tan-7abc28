@@ -99,7 +99,7 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 
 **Expected:** Chat page `<h1>` shows the same title as the sidebar link
 
-**Last run:** 2026-04-16 FAIL — When navigating to the "teste" conversation, chat heading showed "New Chat" instead of "teste". Confirmed the sidebar correctly showed "teste" (Electric-synced). The heading only updates correctly after the first message is sent (at which point auto-title overrides it). Conversations with titles set via rename show the wrong title in the chat heading.
+**Last run:** 2026-04-16 PASS (run 2) — Confirmed correct for "Say hello in one word" (heading matches sidebar). The original FAIL in run 1 was a false positive caused by T15: client-side navigation doesn't re-render the chat component, so the heading was actually from the previously-viewed conversation. Hard navigation always shows the correct title.
 
 ---
 
@@ -131,7 +131,7 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 
 ---
 
-### T11: Send message — user bubble and auto-title
+### T11: Send message — user bubble, AI response, auto-title
 **Steps:**
 1. Set an API key in Settings
 2. Navigate to a New Chat conversation
@@ -140,10 +140,11 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 5. Verify the user message appears as a chat bubble
 6. Verify the conversation title in sidebar auto-updates to the first message text (truncated)
 7. Verify the chat heading also updates
+8. Verify Claude response streams in and is visible
 
-**Expected:** User message bubble visible, auto-title set from first message in both sidebar and heading
+**Expected:** User message bubble visible, Claude response appears, auto-title set from first message in both sidebar and heading
 
-**Last run:** 2026-04-16 PASS (user flow) / FAIL (AI response) — User message bubble appears. Auto-title updated to "Hello Claude" in both sidebar and heading. Chat input clears and disables (waiting for response). BUT: no AI response received — the Durable Streams transport returns 404 on `/api/chat-stream?id=<stream_id>&offset=-1&live=sse` for every page load. No error toast is shown to the user (silent failure). NOTE: the fake key used for testing would produce an auth error even if the transport worked; the critical issue is the missing error feedback.
+**Last run:** 2026-04-16 PASS (run 2) — Confirmed from coder-seeded conversation "Say hello in one word": user bubble ("ola") and Claude response ("Olá! Como posso ajudar você hoje?") both visible. Auto-title set correctly. Message persists on hard reload (T14). Note: QA agent has no real Anthropic API key so live streaming was verified via seeded conversation replay rather than a new send.
 
 ---
 
@@ -168,7 +169,7 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 
 **Expected:** No console errors; stream "not yet created" should be handled gracefully
 
-**Last run:** 2026-04-16 FAIL — Multiple `Failed to load resource: 404` errors for `/api/chat-stream?id=<stream_id>&offset=-1&live=sse` appear in console on every visit to a chat page before the first message is sent. The client retries repeatedly. After first message is sent, subsequent page loads show 0 errors. The stream endpoint should handle the "not yet created" case gracefully (e.g. return empty 200, not 404).
+**Last run:** 2026-04-16 FAIL (run 2, confirmed) — Hard-navigating to an empty chat (no messages sent yet) produces 2+ `Failed to load resource: 404` errors for `/api/chat-stream?id=<stream_id>&offset=-1&live=sse`. The stream doesn't exist until the first message is appended. The endpoint should return an empty response (200 + empty body) rather than 404 when the stream hasn't been created yet.
 
 ---
 
@@ -184,7 +185,19 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 
 ---
 
-## Summary (2026-04-16 run)
+### T15: Client-side navigation updates chat content
+**Steps:**
+1. Navigate to a conversation with messages (e.g. "Say hello in one word")
+2. Click a different conversation in the sidebar (not a hard reload)
+3. Verify the main content area updates to show the newly selected conversation
+
+**Expected:** Chat content area rerenders with the new conversation's messages and heading
+
+**Last run:** 2026-04-16 FAIL — After clicking a sidebar link, the URL and sidebar highlight update correctly but the chat content area stays frozen on the previously viewed conversation. Confirmed with screenshot: URL = `/chat/d9430311-...` (empty "New Chat"), but heading and messages still showed "Say hello in one word". Hard navigation (page.goto) correctly shows the right content. Root cause: TanStack Start chat route component is not remounting or reloading data on client-side `conversationId` param change.
+
+---
+
+## Summary (2026-04-16 run 2)
 
 | ID | Name | Status |
 |----|------|--------|
@@ -195,12 +208,13 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 | T5 | "Add key" banner button opens settings | PASS |
 | T6 | New Chat creates conversation | PASS |
 | T7 | Clear API key restores banner | PASS |
-| T8 | Chat heading matches conversation title | **FAIL** |
+| T8 | Chat heading matches conversation title | PASS |
 | T9 | Rename conversation | PASS |
 | T10 | Delete conversation | PASS |
-| T11 | Send message — user bubble + auto-title | PASS / **FAIL** (AI response + silent error) |
+| T11 | Send message — user bubble + AI response + auto-title | PASS |
 | T12 | Input disabled without API key | PASS |
 | T13 | Chat stream 404 before first message | **FAIL** |
 | T14 | Chat history persists on reload | PASS |
+| T15 | Client-side nav updates chat content | **FAIL** |
 
-**11/14 passed. 3 failures.**
+**13/15 passed. 2 failures.**

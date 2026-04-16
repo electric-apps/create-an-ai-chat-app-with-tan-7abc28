@@ -1,0 +1,84 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - button "New Chat" [ref=e5]:
+      - img
+      - text: New Chat
+    - list [ref=e7]:
+      - listitem [ref=e8]:
+        - generic [ref=e9]:
+          - link "hi - first word only" [ref=e105] [cursor=pointer]:
+            - /url: /chat/9b888c5b-1116-4c7b-b8bb-4fe8e701addf
+          - button "Rename" [ref=e11]:
+            - img [ref=e12]
+          - button "Delete" [ref=e15]:
+            - img [ref=e16]
+      - listitem [ref=e19]:
+        - generic [ref=e20]:
+          - link "Say hello in one word" [active] [ref=e21] [cursor=pointer]:
+            - /url: /chat/68eb047e-c087-4fd4-8bd1-d4c3e63287e0
+          - button "Rename" [ref=e22]:
+            - img [ref=e23]
+          - button "Delete" [ref=e26]:
+            - img [ref=e27]
+      - listitem [ref=e30]:
+        - generic [ref=e31]:
+          - link "New Chat" [ref=e32] [cursor=pointer]:
+            - /url: /chat/d9430311-aed0-4bf6-a4dd-0249b5b2d890
+          - button "Rename" [ref=e33]:
+            - img [ref=e34]
+          - button "Delete" [ref=e37]:
+            - img [ref=e38]
+      - listitem [ref=e41]:
+        - generic [ref=e42]:
+          - link "New Chat" [ref=e43] [cursor=pointer]:
+            - /url: /chat/69a5fd14-8fe8-433d-a495-5d6b07e820e9
+          - button "Rename" [ref=e44]:
+            - img [ref=e45]
+          - button "Delete" [ref=e48]:
+            - img [ref=e49]
+      - listitem [ref=e52]:
+        - generic [ref=e53]:
+          - link "New Chat" [ref=e54] [cursor=pointer]:
+            - /url: /chat/5a0b0b17-6ffb-47c8-b83c-284826ef02c2
+          - button "Rename" [ref=e55]:
+            - img [ref=e56]
+          - button "Delete" [ref=e59]:
+            - img [ref=e60]
+      - listitem [ref=e63]:
+        - generic [ref=e64]:
+          - link "Hello Claude" [ref=e65] [cursor=pointer]:
+            - /url: /chat/564806a6-0eb9-441e-8c5f-071eb7ea0a30
+          - button "Rename" [ref=e66]:
+            - img [ref=e67]
+          - button "Delete" [ref=e70]:
+            - img [ref=e71]
+      - listitem [ref=e74]:
+        - generic [ref=e75]:
+          - link "ola" [ref=e76] [cursor=pointer]:
+            - /url: /chat/522b6e4b-6a6b-4d57-9f0b-fd7527797a8c
+          - button "Rename" [ref=e77]:
+            - img [ref=e78]
+          - button "Delete" [ref=e81]:
+            - img [ref=e82]
+      - listitem [ref=e85]:
+        - generic [ref=e86]:
+          - link "ola" [ref=e87] [cursor=pointer]:
+            - /url: /chat/a47d5dfc-e4fe-4f5c-a207-3e198d4ba57d
+          - button "Rename" [ref=e88]:
+            - img [ref=e89]
+          - button "Delete" [ref=e92]:
+            - img [ref=e93]
+    - button "Settings" [ref=e97]:
+      - img
+      - text: Settings
+  - generic [ref=e106]:
+    - banner [ref=e107]:
+      - heading "Say hello in one word" [level=1] [ref=e108]
+    - generic [ref=e110]:
+      - generic [ref=e112]: ola
+      - generic [ref=e114]: Olá! Como posso ajudar você hoje?
+    - generic [ref=e116]:
+      - textbox "Message Claude (Shift+Enter for newline)…" [ref=e117]
+      - button "Send" [disabled]:
+        - img
+  - region "Notifications alt+T"
