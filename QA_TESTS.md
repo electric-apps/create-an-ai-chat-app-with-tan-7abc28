@@ -137,14 +137,14 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 2. Navigate to a New Chat conversation
 3. Type a message in the input
 4. Click Send
-5. Verify the user message appears as a chat bubble
-6. Verify the conversation title in sidebar auto-updates to the first message text (truncated)
-7. Verify the chat heading also updates
-8. Verify Claude response streams in and is visible
+5. Verify the user message appears as a chat bubble immediately
+6. Verify Claude response streams in within a few seconds
+7. Verify the conversation title in sidebar auto-updates to the first message text (truncated to 40 chars)
+8. Verify the chat heading also updates
 
-**Expected:** User message bubble visible, Claude response appears, auto-title set from first message in both sidebar and heading
+**Expected:** User message bubble visible immediately, Claude response streams in, auto-title set from first message in both sidebar and heading
 
-**Last run:** 2026-04-16 PASS (run 2) — Confirmed from coder-seeded conversation "Say hello in one word": user bubble ("ola") and Claude response ("Olá! Como posso ajudar você hoje?") both visible. Auto-title set correctly. Message persists on hard reload (T14). Note: QA agent has no real Anthropic API key so live streaming was verified via seeded conversation replay rather than a new send.
+**Last run:** 2026-04-16 FAIL (live streaming) / PASS (persistence) — Tested with real API key. User message appears immediately ✓. Auto-title fires instantly ✓ (truncated to 40 chars: "Reply with exactly three words: red gree"). However: Claude response does NOT appear during the session — the SSE stream connection fails with 404 before the first write (T13), and the client never recovers. Response only becomes visible after a hard page reload. After reload: both user bubble and Claude response ("red green blue") visible ✓, 0 console errors ✓. Root cause: same as T13 — the live read connection 404s before the first message is written; fixing T13 will also fix live streaming.
 
 ---
 
@@ -169,7 +169,7 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 
 **Expected:** No console errors; stream "not yet created" should be handled gracefully
 
-**Last run:** 2026-04-16 FAIL (run 2, confirmed) — Hard-navigating to an empty chat (no messages sent yet) produces 2+ `Failed to load resource: 404` errors for `/api/chat-stream?id=<stream_id>&offset=-1&live=sse`. The stream doesn't exist until the first message is appended. The endpoint should return an empty response (200 + empty body) rather than 404 when the stream hasn't been created yet.
+**Last run:** 2026-04-16 FAIL (run 3, root cause confirmed) — Hard-navigating to a chat page produces 2+ `Failed to load resource: 404` errors for `/api/chat-stream?id=<stream_id>&offset=-1&live=sse`. The stream doesn't exist until the first message is written. The client's SSE connection fails on this 404 and does NOT reconnect after the stream is created. This has a cascading effect: Claude's streaming response is never shown to the user during the session (T11) — only visible after a full page reload. Fix: the `/api/chat-stream` route (or the Durable Streams proxy) should return a 200 with an empty SSE body when the stream doesn't exist yet, so the client stays connected and picks up the first write.
 
 ---
 
@@ -211,10 +211,10 @@ Based on: PLAN.md (latest on branch agent/coder-760358)
 | T8 | Chat heading matches conversation title | PASS |
 | T9 | Rename conversation | PASS |
 | T10 | Delete conversation | PASS |
-| T11 | Send message — user bubble + AI response + auto-title | PASS |
+| T11 | Send message — user bubble + AI response + auto-title | PASS (persistence) / **FAIL** (live stream) |
 | T12 | Input disabled without API key | PASS |
 | T13 | Chat stream 404 before first message | **FAIL** |
 | T14 | Chat history persists on reload | PASS |
 | T15 | Client-side nav updates chat content | **FAIL** |
 
-**13/15 passed. 2 failures.**
+**12/15 passed. 3 failures (T11 live streaming, T13, T15). T11 and T13 share the same root cause.**
