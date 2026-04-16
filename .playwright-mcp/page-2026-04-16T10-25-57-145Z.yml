@@ -1,0 +1,42 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - button "New Chat" [ref=e5]:
+      - img
+      - text: New Chat
+    - list [ref=e7]:
+      - listitem [ref=e44]:
+        - generic [ref=e45]:
+          - link "Hello Claude" [ref=e65] [cursor=pointer]:
+            - /url: /chat/564806a6-0eb9-441e-8c5f-071eb7ea0a30
+          - button "Rename" [ref=e47]:
+            - img [ref=e48]
+          - button "Delete" [ref=e51]:
+            - img [ref=e52]
+      - listitem [ref=e19]:
+        - generic [ref=e20]:
+          - link "ola" [ref=e21] [cursor=pointer]:
+            - /url: /chat/522b6e4b-6a6b-4d57-9f0b-fd7527797a8c
+          - button "Rename" [ref=e22]:
+            - img [ref=e23]
+          - button "Delete" [ref=e26]:
+            - img [ref=e27]
+      - listitem [ref=e30]:
+        - generic [ref=e31]:
+          - link "ola" [ref=e32] [cursor=pointer]:
+            - /url: /chat/a47d5dfc-e4fe-4f5c-a207-3e198d4ba57d
+          - button "Rename" [ref=e33]:
+            - img [ref=e34]
+          - button "Delete" [ref=e37]:
+            - img [ref=e38]
+    - button "Settings" [ref=e42]:
+      - img
+      - text: Settings
+  - generic [ref=e55]:
+    - banner [ref=e56]:
+      - heading "Hello Claude" [level=1] [ref=e66]
+    - generic [ref=e68]: Hello Claude
+    - generic [ref=e62]:
+      - textbox "Message Claude (Shift+Enter for newline)…" [ref=e63]
+      - button "Send" [disabled]:
+        - img
+  - region "Notifications alt+T"

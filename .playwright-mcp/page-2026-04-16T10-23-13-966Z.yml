@@ -1,0 +1,38 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - button "New Chat" [ref=e5]:
+      - img
+      - text: New Chat
+    - list [ref=e7]:
+      - listitem [ref=e8]:
+        - generic [ref=e9]:
+          - link "teste" [ref=e10] [cursor=pointer]:
+            - /url: /chat/5ba1504b-0e76-4ead-a385-fb84d8b63b7e
+          - button "Rename" [ref=e11]:
+            - img [ref=e12]
+          - button "Delete" [ref=e15]:
+            - img [ref=e16]
+      - listitem [ref=e19]:
+        - generic [ref=e20]:
+          - link "ola" [ref=e21] [cursor=pointer]:
+            - /url: /chat/522b6e4b-6a6b-4d57-9f0b-fd7527797a8c
+          - button "Rename" [ref=e22]:
+            - img [ref=e23]
+          - button "Delete" [ref=e26]:
+            - img [ref=e27]
+      - listitem [ref=e30]:
+        - generic [ref=e31]:
+          - link "ola" [ref=e32] [cursor=pointer]:
+            - /url: /chat/a47d5dfc-e4fe-4f5c-a207-3e198d4ba57d
+          - button "Rename" [ref=e33]:
+            - img [ref=e34]
+          - button "Delete" [ref=e37]:
+            - img [ref=e38]
+    - button "Settings" [ref=e42]:
+      - img
+      - text: Settings
+  - generic [ref=e50]:
+    - img [ref=e51]
+    - heading "Welcome to AI Chat" [level=1] [ref=e53]
+    - paragraph [ref=e54]: Select a conversation from the sidebar, or click New Chat to start a new one.
+  - region "Notifications alt+T"

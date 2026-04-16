@@ -1,0 +1,70 @@
+- generic:
+  - generic:
+    - complementary:
+      - generic:
+        - button:
+          - img
+          - text: New Chat
+      - generic:
+        - list:
+          - listitem:
+            - generic:
+              - link:
+                - /url: /chat/564806a6-0eb9-441e-8c5f-071eb7ea0a30
+                - text: New Chat
+              - button:
+                - img
+              - button:
+                - img
+          - listitem:
+            - generic:
+              - link:
+                - /url: /chat/522b6e4b-6a6b-4d57-9f0b-fd7527797a8c
+                - text: ola
+              - button:
+                - img
+              - button:
+                - img
+          - listitem:
+            - generic:
+              - link:
+                - /url: /chat/a47d5dfc-e4fe-4f5c-a207-3e198d4ba57d
+                - text: ola
+              - button:
+                - img
+              - button:
+                - img
+      - generic:
+        - button:
+          - img
+          - text: Settings
+    - generic:
+      - generic:
+        - img
+        - generic: Add your Anthropic API key to start chatting.
+        - button: Add key
+      - generic:
+        - generic:
+          - img
+          - heading [level=1]: Welcome to AI Chat
+          - paragraph: Select a conversation from the sidebar, or click New Chat to start a new one.
+    - region "Notifications alt+T"
+  - dialog "Settings" [ref=e129]:
+    - generic [ref=e130]:
+      - heading "Settings" [level=2] [ref=e131]
+      - paragraph [ref=e132]: Your Anthropic API key is stored in this browser's localStorage and sent only to this app's server when you chat. It's never logged or persisted server-side.
+    - generic [ref=e133]:
+      - generic [ref=e134]: Anthropic API key
+      - textbox "Anthropic API key" [active] [ref=e135]:
+        - /placeholder: sk-ant-...
+      - paragraph [ref=e136]:
+        - text: Get one at
+        - link "console.anthropic.com" [ref=e137] [cursor=pointer]:
+          - /url: https://console.anthropic.com/settings/keys
+        - text: .
+    - generic [ref=e138]:
+      - button "Clear" [ref=e139]
+      - button "Save" [ref=e140]
+    - button "Close" [ref=e141]:
+      - img
+      - generic [ref=e142]: Close
