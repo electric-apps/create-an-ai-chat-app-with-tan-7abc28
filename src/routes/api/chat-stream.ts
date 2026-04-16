@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
+import { ensureDurableChatSessionStream } from "@durable-streams/tanstack-ai-transport"
 import { DS_AUTH, DS_BASE } from "@/lib/ds-stream"
 
 const HOP_BY_HOP = new Set([
@@ -26,25 +27,30 @@ async function handleGET({ request }: { request: Request }) {
   }
 
   const accept = request.headers.get("accept")
-  const response = await fetch(upstream, {
-    headers: {
-      ...DS_AUTH,
-      ...(accept ? { Accept: accept } : {}),
-    },
-  })
-
-  // Silence 404s when the stream hasn't been created yet (new conversation,
-  // pre-first-message). Return an empty SSE-compatible response so the DS
-  // client keeps long-polling quietly.
-  if (response.status === 404) {
-    const isSse = (accept ?? "").includes("text/event-stream")
-    return new Response(isSse ? ":\n\n" : "[]", {
-      status: 200,
+  const doFetch = () =>
+    fetch(upstream, {
       headers: {
-        "Content-Type": isSse ? "text/event-stream" : "application/json",
-        "Cache-Control": "no-store",
+        ...DS_AUTH,
+        ...(accept ? { Accept: accept } : {}),
       },
     })
+
+  let response = await doFetch()
+
+  // Stream doesn't exist yet — heal by creating it upstream, then retry once.
+  // This covers conversations created before eager-create was wired up, and
+  // any race where the read arrives before the POST /mutate finishes.
+  if (response.status === 404) {
+    try {
+      await ensureDurableChatSessionStream({
+        writeUrl: `${DS_BASE}/chat-${id}`,
+        headers: DS_AUTH,
+        createIfMissing: true,
+      })
+      response = await doFetch()
+    } catch (err) {
+      console.error("chat-stream: failed to auto-create stream", err)
+    }
   }
 
   const headers = new Headers()

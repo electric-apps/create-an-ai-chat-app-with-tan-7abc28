@@ -13,13 +13,17 @@ import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/chat/$conversationId")({
   ssr: false,
-  component: ChatPage,
+  component: ChatRoute,
 })
 
 const MODEL = "claude-sonnet-4-5"
 
-function ChatPage() {
+function ChatRoute() {
   const { conversationId } = Route.useParams()
+  return <ChatPage key={conversationId} conversationId={conversationId} />
+}
+
+function ChatPage({ conversationId }: { conversationId: string }) {
   const navigate = useNavigate()
   const { apiKey, ready } = useApiKey()
 
