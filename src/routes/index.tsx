@@ -1,18 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { Button } from "@/components/ui/button"
+import { MessageSquare } from "lucide-react"
 
-export const Route = createFileRoute("/")({ component: App })
+export const Route = createFileRoute("/")({
+  ssr: false,
+  component: HomePage,
+})
 
-function App() {
+function HomePage() {
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
-        </div>
+    <div className="flex flex-1 items-center justify-center text-center">
+      <div className="max-w-sm space-y-3 p-8">
+        <MessageSquare className="mx-auto h-10 w-10 text-muted-foreground" />
+        <h1 className="text-xl font-semibold">Welcome to AI Chat</h1>
+        <p className="text-sm text-muted-foreground">
+          Select a conversation from the sidebar, or click{" "}
+          <span className="font-medium">New Chat</span> to start a new one.
+        </p>
       </div>
     </div>
   )

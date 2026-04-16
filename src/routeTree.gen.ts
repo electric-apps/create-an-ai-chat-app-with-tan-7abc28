@@ -8,59 +8,177 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root"
-import { Route as IndexRouteImport } from "./routes/index"
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as ChatConversationIdRouteImport } from './routes/chat.$conversationId'
+import { Route as ApiConversationsRouteImport } from './routes/api/conversations'
+import { Route as ApiChatStreamRouteImport } from './routes/api/chat-stream'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as ApiConversationsMutateRouteImport } from './routes/api/conversations.mutate'
 
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ChatConversationIdRoute = ChatConversationIdRouteImport.update({
+  id: '/chat/$conversationId',
+  path: '/chat/$conversationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiConversationsRoute = ApiConversationsRouteImport.update({
+  id: '/api/conversations',
+  path: '/api/conversations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatStreamRoute = ApiChatStreamRouteImport.update({
+  id: '/api/chat-stream',
+  path: '/api/chat-stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiConversationsMutateRoute = ApiConversationsMutateRouteImport.update({
+  id: '/mutate',
+  path: '/mutate',
+  getParentRoute: () => ApiConversationsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute
+  '/': typeof IndexRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/chat-stream': typeof ApiChatStreamRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/chat/$conversationId': typeof ChatConversationIdRoute
+  '/api/conversations/mutate': typeof ApiConversationsMutateRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute
+  '/': typeof IndexRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/chat-stream': typeof ApiChatStreamRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/chat/$conversationId': typeof ChatConversationIdRoute
+  '/api/conversations/mutate': typeof ApiConversationsMutateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  "/": typeof IndexRoute
+  '/': typeof IndexRoute
+  '/api/chat': typeof ApiChatRoute
+  '/api/chat-stream': typeof ApiChatStreamRoute
+  '/api/conversations': typeof ApiConversationsRouteWithChildren
+  '/chat/$conversationId': typeof ChatConversationIdRoute
+  '/api/conversations/mutate': typeof ApiConversationsMutateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/"
+  fullPaths:
+    | '/'
+    | '/api/chat'
+    | '/api/chat-stream'
+    | '/api/conversations'
+    | '/chat/$conversationId'
+    | '/api/conversations/mutate'
   fileRoutesByTo: FileRoutesByTo
-  to: "/"
-  id: "__root__" | "/"
+  to:
+    | '/'
+    | '/api/chat'
+    | '/api/chat-stream'
+    | '/api/conversations'
+    | '/chat/$conversationId'
+    | '/api/conversations/mutate'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/chat'
+    | '/api/chat-stream'
+    | '/api/conversations'
+    | '/chat/$conversationId'
+    | '/api/conversations/mutate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiChatRoute: typeof ApiChatRoute
+  ApiChatStreamRoute: typeof ApiChatStreamRoute
+  ApiConversationsRoute: typeof ApiConversationsRouteWithChildren
+  ChatConversationIdRoute: typeof ChatConversationIdRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/": {
-      id: "/"
-      path: "/"
-      fullPath: "/"
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/chat/$conversationId': {
+      id: '/chat/$conversationId'
+      path: '/chat/$conversationId'
+      fullPath: '/chat/$conversationId'
+      preLoaderRoute: typeof ChatConversationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/conversations': {
+      id: '/api/conversations'
+      path: '/api/conversations'
+      fullPath: '/api/conversations'
+      preLoaderRoute: typeof ApiConversationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat-stream': {
+      id: '/api/chat-stream'
+      path: '/api/chat-stream'
+      fullPath: '/api/chat-stream'
+      preLoaderRoute: typeof ApiChatStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/conversations/mutate': {
+      id: '/api/conversations/mutate'
+      path: '/mutate'
+      fullPath: '/api/conversations/mutate'
+      preLoaderRoute: typeof ApiConversationsMutateRouteImport
+      parentRoute: typeof ApiConversationsRoute
     }
   }
 }
 
+interface ApiConversationsRouteChildren {
+  ApiConversationsMutateRoute: typeof ApiConversationsMutateRoute
+}
+
+const ApiConversationsRouteChildren: ApiConversationsRouteChildren = {
+  ApiConversationsMutateRoute: ApiConversationsMutateRoute,
+}
+
+const ApiConversationsRouteWithChildren =
+  ApiConversationsRoute._addFileChildren(ApiConversationsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiChatRoute: ApiChatRoute,
+  ApiChatStreamRoute: ApiChatStreamRoute,
+  ApiConversationsRoute: ApiConversationsRouteWithChildren,
+  ChatConversationIdRoute: ChatConversationIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx"
-import type { createStart } from "@tanstack/react-start"
-declare module "@tanstack/react-start" {
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
