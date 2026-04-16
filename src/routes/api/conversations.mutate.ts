@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { eq } from "drizzle-orm"
+import { ensureDurableChatSessionStream } from "@durable-streams/tanstack-ai-transport"
 import { db } from "@/db"
 import { conversations } from "@/db/schema"
 import { parseDates, generateTxId } from "@/db/utils"
+import { DS_AUTH, DS_BASE } from "@/lib/ds-stream"
 
 async function handlePOST({ request }: { request: Request }) {
   const raw = await request.json()
@@ -19,6 +21,19 @@ async function handlePOST({ request }: { request: Request }) {
     const txid = await generateTxId(tx)
     return { txid, row: inserted }
   })
+
+  // Eagerly create the durable stream so the first /api/chat-stream GET
+  // finds an empty (but existing) stream instead of 404ing.
+  try {
+    await ensureDurableChatSessionStream({
+      writeUrl: `${DS_BASE}/chat-${stream_id}`,
+      headers: DS_AUTH,
+      createIfMissing: true,
+    })
+  } catch (err) {
+    console.error("Failed to create durable stream:", err)
+  }
+
   return Response.json({ txid, row })
 }
 

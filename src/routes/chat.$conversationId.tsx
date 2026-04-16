@@ -51,6 +51,7 @@ function ChatPage() {
 
   return (
     <ChatInner
+      key={conversationId}
       connection={connection}
       conversationTitle={conversation.title}
       streamId={streamId!}
